@@ -32,7 +32,7 @@ export const personalInfo = {
     },
 
     // Resume/CV link (optional)
-    resumeUrl: "/resume.pdf",
+    resumeUrl: "https://drive.google.com/drive/u/0/home",
 
     // Profile image (place in public folder)
     avatarUrl: "/avatar.jpg",
