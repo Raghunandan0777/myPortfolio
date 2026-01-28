@@ -18,24 +18,24 @@
   --bg-secondary: #0f0f1a;
   --bg-card: #151525;
   --bg-elevated: #1a1a2e;
-  
+
   /* Neon accent colors */
   --neon-purple: #a855f7;
   --neon-blue: #3b82f6;
   --neon-cyan: #06b6d4;
   --neon-pink: #ec4899;
   --neon-green: #10b981;
-  
+
   /* Text colors */
   --text-primary: #ffffff;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
-  
+
   /* Gradient colors */
   --gradient-start: #667eea;
   --gradient-mid: #764ba2;
   --gradient-end: #f093fb;
-  
+
   /* Glass effect */
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
@@ -47,41 +47,42 @@
    Global resets and defaults
    ======================================== */
 @layer base {
+
   /* Smooth scrolling for anchor links */
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
   }
-  
+
   /* Body base styles with noise texture */
   body {
     @apply bg-dark-900 text-white antialiased;
     font-family: 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
-    background-image: 
+    background-image:
       url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     background-blend-mode: overlay;
     background-color: var(--bg-primary);
   }
-  
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   ::-webkit-scrollbar-track {
     background: var(--bg-secondary);
   }
-  
+
   ::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, var(--neon-purple), var(--neon-cyan));
     border-radius: 4px;
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, var(--neon-pink), var(--neon-purple));
   }
-  
+
   /* Selection styling */
   ::selection {
     background: rgba(168, 85, 247, 0.3);
@@ -94,6 +95,7 @@
    Reusable component classes
    ======================================== */
 @layer components {
+
   /* Glassmorphism card base */
   .glass {
     background: var(--glass-bg);
@@ -102,7 +104,7 @@
     border: 1px solid var(--glass-border);
     border-radius: 1rem;
   }
-  
+
   /* Glassmorphism with stronger effect */
   .glass-strong {
     background: rgba(255, 255, 255, 0.08);
@@ -111,7 +113,7 @@
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 1rem;
   }
-  
+
   /* Gradient text effect */
   .gradient-text {
     @apply bg-clip-text text-transparent;
@@ -119,19 +121,19 @@
     background-size: 200% 200%;
     animation: gradientShift 8s ease infinite;
   }
-  
+
   /* Neon glow button */
   .btn-glow {
     @apply relative px-6 py-3 rounded-lg font-medium transition-all duration-300;
     background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
     box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
   }
-  
+
   .btn-glow:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 40px rgba(168, 85, 247, 0.6);
   }
-  
+
   /* Outline glow button */
   .btn-outline-glow {
     @apply relative px-6 py-3 rounded-lg font-medium transition-all duration-300;
@@ -139,32 +141,32 @@
     border: 1px solid var(--neon-purple);
     color: var(--neon-purple);
   }
-  
+
   .btn-outline-glow:hover {
     background: rgba(168, 85, 247, 0.1);
     box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
     transform: translateY(-2px);
   }
-  
+
   /* Liquid shape animation */
   .liquid-shape {
     animation: liquid 4s ease-in-out infinite;
   }
-  
+
   /* Section container */
   .section-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-  
+
   /* Floating animation variants */
   .floating {
     animation: float 6s ease-in-out infinite;
   }
-  
+
   .floating-slow {
     animation: float 8s ease-in-out infinite;
   }
-  
+
   .floating-delayed {
     animation: float 6s ease-in-out 2s infinite;
   }
@@ -175,57 +177,58 @@
    Custom utility helpers
    ======================================== */
 @layer utilities {
+
   /* Glow effect utilities */
   .glow-purple {
     box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
   }
-  
+
   .glow-cyan {
     box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
   }
-  
+
   .glow-pink {
     box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
   }
-  
+
   /* Text glow effects */
   .text-glow {
     text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
   }
-  
+
   .text-glow-cyan {
     text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
   }
-  
+
   /* Gradient backgrounds */
   .bg-gradient-radial {
     background: radial-gradient(circle at center, var(--bg-elevated) 0%, var(--bg-primary) 70%);
   }
-  
+
   .bg-gradient-mesh {
-    background: 
+    background:
       radial-gradient(at 40% 20%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
       radial-gradient(at 80% 0%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
       radial-gradient(at 0% 50%, rgba(236, 72, 153, 0.1) 0px, transparent 50%),
       radial-gradient(at 80% 50%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
       radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
   }
-  
+
   /* Hide scrollbar utility */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-  
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   /* Perspective for 3D effects */
   .perspective-1000 {
     perspective: 1000px;
   }
-  
+
   .preserve-3d {
     transform-style: preserve-3d;
   }
@@ -236,31 +239,72 @@
    Extended animations for liquid effects
    ======================================== */
 @keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 @keyframes liquid {
-  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-  50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+
+  0%,
+  100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
 }
 
 @keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 1; }
-  100% { transform: scale(2); opacity: 0; }
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
 /* Liquid blob animation for backgrounds */
 @keyframes blob {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(20px, -30px) scale(1.1); }
-  50% { transform: translate(-20px, 20px) scale(0.9); }
-  75% { transform: translate(30px, 10px) scale(1.05); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(20px, -30px) scale(1.1);
+  }
+
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+
+  75% {
+    transform: translate(30px, 10px) scale(1.05);
+  }
 }
 
 .animate-blob {
@@ -273,4 +317,17 @@
 
 .animation-delay-4000 {
   animation-delay: 4s;
+}
+
+/* ========================================
+   Responsive Name Layout
+   Wraps last name below first name on small screens
+   ======================================== */
+@media (max-width: 464px) {
+  .name-space {
+    display: block !important;
+    width: 100%;
+    height: 0.25rem;
+    margin-right: 0 !important;
+  }
 }

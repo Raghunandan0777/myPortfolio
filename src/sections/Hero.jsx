@@ -89,7 +89,7 @@ const Hero = () => {
               key={i}
               custom={i}
               variants={letterVariants}
-              className={`inline-block ${letter === ' ' ? 'mr-4' : ''} 
+              className={`inline-block ${letter === ' ' ? 'name-space mr-4' : ''} 
                 bg-clip-text text-transparent 
                 bg-gradient-to-r from-white via-purple-200 to-cyan-200
               `}

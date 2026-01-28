@@ -39,8 +39,8 @@ const SocialIcons = {
  */
 const socialLinks = [
   { name: 'GitHub', icon: SocialIcons.github, url: personalInfo.social.github },
-  { name: 'LinkedIn', icon: SocialIcons.linkedin, url: personalInfo.social.linkedin },
-  { name: 'Twitter', icon: SocialIcons.twitter, url: personalInfo.social.twitter },
+  { name: 'LinkedIn', icon: SocialIcons.linkedin, url: "https://www.linkedin.com/in/raghunandan-shah-399364220" },
+  { name: 'Twitter', icon: SocialIcons.twitter, url: "https://x.com/Raghunanda36296" },
   { name: 'Email', icon: SocialIcons.email, url: `mailto:${personalInfo.social.email}` },
 ];
 
@@ -125,7 +125,7 @@ const Footer = () => {
           className="mt-8 text-center"
         >
           <p className="text-gray-600 text-xs">
-            Crafted with ❤️ using React, Tailwind CSS & Three.js
+            Crafted with ❤️ made by Raghunandan Shah
           </p>
         </motion.div>
       </div>
