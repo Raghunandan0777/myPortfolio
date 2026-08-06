@@ -25,6 +25,7 @@ import Skills from './sections/Skills';
 import Projects from './sections/Projects';
 import Timeline from './sections/Timeline';
 import Services from './sections/Services';
+import Certifications from './sections/Certifications';
 import Contact from './sections/Contact';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -104,6 +105,7 @@ function App() {
         <Projects />
         <Timeline />
         <Services />
+        <Certifications />
         <Contact />
       </main>
 

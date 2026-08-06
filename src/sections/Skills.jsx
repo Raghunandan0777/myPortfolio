@@ -4,7 +4,7 @@
    GSAP scroll-triggered stagger entrance
    ======================================== */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -83,9 +83,19 @@ const SkillCard = ({ skill, index }) => {
   );
 };
 
+const categories = [
+  { id: 'all', label: 'All Stack' },
+  { id: 'frontend', label: 'Frontend' },
+  { id: 'backend', label: 'Backend' },
+  { id: 'database', label: 'Databases' },
+  { id: 'devops', label: 'DevOps & Cloud' },
+  { id: 'ai', label: 'AI Integrations' },
+];
+
 const Skills = () => {
   const sectionRef = useRef(null);
   const gridRef = useRef(null);
+  const [activeCategory, setActiveCategory] = useState('all');
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -115,7 +125,11 @@ const Skills = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [activeCategory]);
+
+  const filteredSkills = activeCategory === 'all'
+    ? skills
+    : skills.filter(s => s.category === activeCategory);
 
   return (
     <section id="skills" ref={sectionRef} className="section-padding relative">
@@ -129,11 +143,28 @@ const Skills = () => {
           subtitle="The tools and technologies I use to bring ideas to life."
         />
 
+        {/* Category Filter Tabs */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300 ${
+                activeCategory === cat.id
+                  ? 'bg-gradient-to-r from-primary to-accent text-white shadow-glow-sm scale-105'
+                  : 'glass text-text-secondary hover:text-white hover:bg-glass-hover'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
         <div
           ref={gridRef}
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6"
         >
-          {skills.map((skill, index) => (
+          {filteredSkills.map((skill, index) => (
             <SkillCard key={skill.name} skill={skill} index={index} />
           ))}
         </div>

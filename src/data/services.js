@@ -1,48 +1,60 @@
 /* ========================================
-   Services Data
-   Raghunandan Shah's Service Offerings
+   Services Data — What I Offer
+   Detailed service offerings with deliverables and tech stacks
    ======================================== */
 
 export const services = [
   {
     id: 1,
-    title: "Web Development",
-    description: "Full-stack web applications built with React, Node.js, and modern frameworks. Scalable, performant, and production-ready.",
+    title: "Full-Stack Web Development",
+    description: "End-to-end web applications built with React, Next.js, Node.js, and Express. Designed for high concurrency, security, and scalability.",
+    valueProp: "Turn complex ideas into seamless production platforms.",
+    deliverables: ["Full Architecture", "REST / GraphQL APIs", "Admin Dashboard", "CI/CD Setup"],
     icon: "Globe",
     gradient: "from-blue-500 to-cyan-500",
   },
   {
     id: 2,
-    title: "AI Integration",
-    description: "Integrate AI capabilities into your products using OpenAI, Gemini, and open-source models. Smart features that add real value.",
+    title: "AI Integration & SaaS",
+    description: "Integrate LLM capabilities into your product using OpenAI, Gemini, and custom AI APIs for automated workflows, text, and image generation.",
+    valueProp: "Supercharge your business with smart AI workflows.",
+    deliverables: ["OpenAI & Gemini APIs", "AI Image & Prompt Tools", "Custom AI Workflows"],
     icon: "Brain",
     gradient: "from-purple-500 to-pink-500",
   },
   {
     id: 3,
-    title: "Frontend Development",
-    description: "Pixel-perfect, responsive interfaces with React, Next.js, and Tailwind CSS. Beautiful UIs that users love.",
+    title: "Frontend UI/UX Engineering",
+    description: "Pixel-perfect, ultra-responsive web interfaces built with React, Next.js, Tailwind CSS, GSAP, and Framer Motion micro-interactions.",
+    valueProp: "Deliver award-winning, buttery smooth user interfaces.",
+    deliverables: ["Responsive System", "Custom Animations", "Lighthouse 95+ Score"],
     icon: "Layout",
     gradient: "from-cyan-500 to-blue-500",
   },
   {
     id: 4,
-    title: "REST API Development",
-    description: "Secure, well-documented REST APIs with Node.js and Express. JWT auth, rate limiting, and proper error handling.",
+    title: "REST API & Backend Architecture",
+    description: "Secure, highly optimized backend services built with Node.js, Express, MongoDB, and PostgreSQL. JWT authentication, rate limiting, and caching.",
+    valueProp: "Robust server infrastructure built for speed and uptime.",
+    deliverables: ["Secure REST APIs", "Database Schemas", "Auth & RBAC System"],
     icon: "Code",
     gradient: "from-green-500 to-emerald-500",
   },
   {
     id: 5,
-    title: "Dashboard Development",
-    description: "Data-rich admin dashboards with charts, tables, and real-time updates. Turn your data into actionable insights.",
+    title: "Dashboard & Analytics Systems",
+    description: "Real-time administrative dashboards with data visualization charts, user management, exportable reports, and key performance metrics.",
+    valueProp: "Transform complex data into actionable visual insights.",
+    deliverables: ["Real-time Charts", "Role Management", "Export & Analytics"],
     icon: "BarChart3",
     gradient: "from-orange-500 to-amber-500",
   },
   {
     id: 6,
-    title: "Automation",
-    description: "Automate repetitive workflows, data pipelines, and business processes. Save time and reduce human error.",
+    title: "Performance & Cloud Deployment",
+    description: "Cloud setup, containerization, database indexing, and asset optimization to ensure lightning-fast page loads and zero downtime.",
+    valueProp: "Ensure maximum speed, security, and continuous deployment.",
+    deliverables: ["AWS / Docker Setup", "CDN & Asset Optimization", "Vercel / Render CI/CD"],
     icon: "Cog",
     gradient: "from-pink-500 to-rose-500",
   },

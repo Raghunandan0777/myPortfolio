@@ -7,7 +7,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { MapPin, Download, CheckCircle } from 'lucide-react';
+import { MapPin, Download, CheckCircle, Github, Linkedin } from 'lucide-react';
 import SectionHeading from '../components/ui/SectionHeading';
 import MagneticButton from '../components/ui/MagneticButton';
 import personalInfo from '../data/personal';
@@ -164,7 +164,7 @@ const About = () => {
             </div>
 
             {/* Bio */}
-            <div className="about-animate space-y-4">
+            <div className="about-animate space-y-3">
               <p className="text-text-secondary leading-relaxed text-base md:text-lg">
                 {personalInfo.bio}
               </p>
@@ -173,10 +173,24 @@ const About = () => {
               </p>
             </div>
 
+            {/* Quick Overview: Education & Current Focus */}
+            <div className="about-animate grid grid-cols-1 sm:grid-cols-2 gap-3 py-2">
+              <div className="glass rounded-xl p-3.5 border border-glass-border">
+                <div className="text-xs font-mono uppercase text-accent tracking-wider mb-1">Graduation & Education</div>
+                <div className="text-sm font-semibold text-white">B.Tech in Computer Science</div>
+                <div className="text-xs text-text-muted">Parul University (2021 – 2025)</div>
+              </div>
+              <div className="glass rounded-xl p-3.5 border border-glass-border">
+                <div className="text-xs font-mono uppercase text-primary-light tracking-wider mb-1">Current Focus</div>
+                <div className="text-sm font-semibold text-white">Building AI-Powered Products</div>
+                <div className="text-xs text-text-muted">Full-Stack SaaS & Scalable Systems</div>
+              </div>
+            </div>
+
             {/* Stats Grid */}
-            <div className="about-animate grid grid-cols-2 sm:grid-cols-4 gap-4 py-6">
+            <div className="about-animate grid grid-cols-2 sm:grid-cols-4 gap-3 py-2">
               {personalInfo.stats.map((stat, i) => (
-                <div key={i} className="glass rounded-xl p-4 card-hover">
+                <div key={i} className="glass rounded-xl p-3.5 card-hover">
                   <AnimatedStat
                     value={stat.value}
                     suffix={stat.suffix}
@@ -186,8 +200,8 @@ const About = () => {
               ))}
             </div>
 
-            {/* Resume Button */}
-            <div className="about-animate">
+            {/* Action Buttons: Resume + GitHub + LinkedIn */}
+            <div className="about-animate flex flex-wrap items-center gap-3 pt-2">
               <MagneticButton
                 variant="primary"
                 href={personalInfo.resumeUrl}
@@ -196,6 +210,26 @@ const About = () => {
                 <Download size={18} />
                 Download Resume
               </MagneticButton>
+
+              <a
+                href={personalInfo.social.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-11 h-11 rounded-xl glass flex items-center justify-center text-text-secondary hover:text-white hover:bg-glass-hover hover:border-primary/40 transition-all duration-300 hover:shadow-glow-sm"
+                title="GitHub Profile"
+              >
+                <Github size={20} />
+              </a>
+
+              <a
+                href={personalInfo.social.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-11 h-11 rounded-xl glass flex items-center justify-center text-text-secondary hover:text-white hover:bg-glass-hover hover:border-primary/40 transition-all duration-300 hover:shadow-glow-sm"
+                title="LinkedIn Profile"
+              >
+                <Linkedin size={20} />
+              </a>
             </div>
           </div>
         </div>

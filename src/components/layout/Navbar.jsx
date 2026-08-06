@@ -16,12 +16,14 @@ const navLinks = [
   { id: 'projects', label: 'Projects' },
   { id: 'journey', label: 'Journey' },
   { id: 'services', label: 'Services' },
+  { id: 'certifications', label: 'Certifications' },
   { id: 'contact', label: 'Contact' },
 ];
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef(null);
 
@@ -34,10 +36,16 @@ const Navbar = () => {
     );
   }, []);
 
-  // Scroll detection for background + active section tracking
+  // Scroll detection for background + active section tracking + progress
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
+
+      // Scroll progress
+      const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      setScrollProgress(scrolled);
 
       // Find active section
       const sections = navLinks.map(link => document.getElementById(link.id));
@@ -66,6 +74,14 @@ const Navbar = () => {
 
   return (
     <>
+      {/* Scroll Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 h-[3px] bg-glass z-[100] pointer-events-none">
+        <div
+          className="h-full bg-gradient-to-r from-primary via-accent to-primary transition-all duration-150 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
       {/* Desktop Navbar */}
       <nav
         ref={navRef}
