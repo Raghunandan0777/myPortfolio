@@ -1,87 +1,93 @@
 /* ========================================
-   Skills Data
-   Raghunandan Shah's Technical Skills
+   Skills Data — Card-based structure
+   Each skill has an icon, color, and category
    ======================================== */
 
-export const skills = {
-    // Frontend Development Skills
-    frontend: {
-        title: "Frontend",
-        icon: "🎨",
-        color: "neon-purple",
-        items: [
-            { name: "React.js", level: 90 },
-            { name: "JavaScript (ES6+)", level: 88 },
-            { name: "HTML5", level: 95 },
-            { name: "CSS3", level: 90 },
-            { name: "Tailwind CSS", level: 92 },
-        ],
-    },
-
-    // Backend Development Skills
-    backend: {
-        title: "Backend",
-        icon: "⚙️",
-        color: "neon-cyan",
-        items: [
-            { name: "Node.js", level: 88 },
-            { name: "Express.js", level: 85 },
-            { name: "REST APIs", level: 90 },
-            { name: "JWT Authentication", level: 85 },
-            { name: "OAuth", level: 80 },
-        ],
-    },
-
-    // Database Skills
-    databases: {
-        title: "Databases",
-        icon: "🗄️",
-        color: "neon-pink",
-        items: [
-            { name: "MongoDB", level: 88 },
-            { name: "PostgreSQL", level: 85 },
-            { name: "SQL", level: 82 },
-        ],
-    },
-
-    // Tools & Deployment
-    tools: {
-        title: "Tools & Deployment",
-        icon: "🚀",
-        color: "neon-purple",
-        items: [
-            { name: "Git", level: 90 },
-            { name: "GitHub", level: 90 },
-            { name: "Postman", level: 85 },
-            { name: "Vercel", level: 88 },
-            { name: "Render", level: 85 },
-        ],
-    },
-};
-
-// Tech stack icons for About section (Your actual tech stack)
-export const techStackIcons = [
-    { name: "React.js", icon: "⚛️", category: "frontend" },
-    { name: "JavaScript", icon: "🟨", category: "frontend" },
-    { name: "Node.js", icon: "🟩", category: "backend" },
-    { name: "Express.js", icon: "⚡", category: "backend" },
-    { name: "MongoDB", icon: "🍃", category: "database" },
-    { name: "PostgreSQL", icon: "🐘", category: "database" },
-    { name: "Tailwind CSS", icon: "💨", category: "frontend" },
-    { name: "HTML5", icon: "🌐", category: "frontend" },
-    { name: "CSS3", icon: "🎨", category: "frontend" },
-    { name: "Git", icon: "📂", category: "tools" },
-    { name: "GitHub", icon: "🐙", category: "tools" },
-    { name: "Postman", icon: "📬", category: "tools" },
-    { name: "Vercel", icon: "▲", category: "deployment" },
-    { name: "Render", icon: "🚀", category: "deployment" },
-    { name: "REST APIs", icon: "🔗", category: "backend" },
-    { name: "JWT", icon: "🔐", category: "backend" },
+export const skills = [
+  {
+    name: "React",
+    icon: "Atom",
+    color: "#61DAFB",
+    category: "frontend",
+    description: "Component architecture & hooks",
+  },
+  {
+    name: "Next.js",
+    icon: "Globe",
+    color: "#ffffff",
+    category: "frontend",
+    description: "SSR & full-stack React framework",
+  },
+  {
+    name: "Node.js",
+    icon: "Server",
+    color: "#68A063",
+    category: "backend",
+    description: "Server-side JavaScript runtime",
+  },
+  {
+    name: "Express",
+    icon: "Zap",
+    color: "#f0db4f",
+    category: "backend",
+    description: "Fast, minimalist web framework",
+  },
+  {
+    name: "MongoDB",
+    icon: "Database",
+    color: "#47A248",
+    category: "database",
+    description: "NoSQL document database",
+  },
+  {
+    name: "TypeScript",
+    icon: "FileCode",
+    color: "#3178C6",
+    category: "frontend",
+    description: "Type-safe JavaScript superset",
+  },
+  {
+    name: "Tailwind CSS",
+    icon: "Palette",
+    color: "#06B6D4",
+    category: "frontend",
+    description: "Utility-first CSS framework",
+  },
+  {
+    name: "AWS",
+    icon: "Cloud",
+    color: "#FF9900",
+    category: "devops",
+    description: "Cloud computing platform",
+  },
+  {
+    name: "Docker",
+    icon: "Container",
+    color: "#2496ED",
+    category: "devops",
+    description: "Containerization platform",
+  },
+  {
+    name: "Git",
+    icon: "GitBranch",
+    color: "#F05032",
+    category: "tools",
+    description: "Version control system",
+  },
+  {
+    name: "AI APIs",
+    icon: "Brain",
+    color: "#8B5CF6",
+    category: "ai",
+    description: "OpenAI, Gemini & ML integrations",
+  },
+  {
+    name: "PostgreSQL",
+    icon: "Database",
+    color: "#336791",
+    category: "database",
+    description: "Relational database system",
+  },
 ];
-
-// Helper to get all skills as flat array
-export const getAllSkills = () => {
-    return Object.values(skills).flatMap(category => category.items);
-};
 
 export default skills;

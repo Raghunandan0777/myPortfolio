@@ -1,217 +1,161 @@
 /* ========================================
-   Navbar Component
-   Floating navigation with glassmorphism
-   Includes mobile hamburger menu with animations
+   Navbar — Floating Glass Navigation
+   Blur background, animated active indicator
+   Mobile: iOS-style bottom dock navigation
    ======================================== */
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { personalInfo } from '../../data/personal';
 
-/**
- * Navigation links configuration
- * Add or remove links here to update the nav
- */
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import gsap from 'gsap';
+import { Menu, X } from 'lucide-react';
+
 const navLinks = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Skills', href: '#skills' },
-  { name: 'Experience', href: '#experience' },
-  { name: 'Contact', href: '#contact' },
+  { id: 'home', label: 'Home' },
+  { id: 'about', label: 'About' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'journey', label: 'Journey' },
+  { id: 'services', label: 'Services' },
+  { id: 'contact', label: 'Contact' },
 ];
 
-/**
- * Navbar Component
- * Floating glassmorphism navbar with smooth scroll and mobile menu
- */
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navRef = useRef(null);
 
-  /**
-   * Handle scroll to update navbar appearance
-   * Adds background blur when scrolled past threshold
-   */
+  // Entrance animation
+  useEffect(() => {
+    gsap.fromTo(
+      navRef.current,
+      { y: -100, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.5 }
+    );
+  }, []);
+
+  // Scroll detection for background + active section tracking
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
-      
-      // Update active section based on scroll position
-      const sections = navLinks.map(link => link.href.replace('#', ''));
-      for (const section of sections.reverse()) {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 150) {
-            setActiveSection(section);
-            break;
-          }
+
+      // Find active section
+      const sections = navLinks.map(link => document.getElementById(link.id));
+      const scrollPos = window.scrollY + window.innerHeight / 3;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
+        if (section && section.offsetTop <= scrollPos) {
+          setActiveSection(navLinks[i].id);
+          break;
         }
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  /**
-   * Smooth scroll to section
-   */
-  const scrollToSection = (e, href) => {
-    e.preventDefault();
-    const element = document.querySelector(href);
+  const scrollTo = (id) => {
+    const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
-      setIsOpen(false);
     }
-  };
-
-  // Mobile menu animation variants
-  const menuVariants = {
-    closed: { 
-      opacity: 0, 
-      y: -20,
-      transition: { duration: 0.2 }
-    },
-    open: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.3, staggerChildren: 0.1, delayChildren: 0.1 }
-    },
-  };
-
-  const menuItemVariants = {
-    closed: { opacity: 0, x: -20 },
-    open: { opacity: 1, x: 0 },
+    setMobileOpen(false);
   };
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-      className={`
-        fixed top-0 left-0 right-0 z-50
-        transition-all duration-300
-        ${isScrolled 
-          ? 'py-3 bg-dark-900/80 backdrop-blur-xl border-b border-white/5' 
-          : 'py-5 bg-transparent'
-        }
-      `}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Logo / Name */}
-          <motion.a
-            href="#home"
-            onClick={(e) => scrollToSection(e, '#home')}
-            className="relative z-50"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+    <>
+      {/* Desktop Navbar */}
+      <nav
+        ref={navRef}
+        className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 hidden md:flex
+          ${isScrolled
+            ? 'glass-strong shadow-glass rounded-2xl px-2 py-2'
+            : 'bg-transparent px-4 py-4'
+          }`}
+        style={{ opacity: 0 }}
+      >
+        <div className="flex items-center gap-1">
+          {/* Logo */}
+          <button
+            onClick={() => scrollTo('home')}
+            className="mr-4 px-3 py-1.5 font-display font-bold text-lg text-gradient"
           >
-            <span className="text-xl md:text-2xl font-bold font-display">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">
-                {personalInfo.name.split(' ')[0]}
-              </span>
-              <span className="text-white">.</span>
-            </span>
-          </motion.a>
+            RS
+          </button>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-1">
+          {/* Nav Links */}
+          <div className="flex items-center gap-0.5 relative">
             {navLinks.map((link) => (
-              <motion.a
-                key={link.name}
-                href={link.href}
-                onClick={(e) => scrollToSection(e, link.href)}
-                className={`
-                  relative px-4 py-2 rounded-lg text-sm font-medium
-                  transition-colors duration-200
-                  ${activeSection === link.href.replace('#', '')
+              <button
+                key={link.id}
+                onClick={() => scrollTo(link.id)}
+                className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-colors duration-300 ${
+                  activeSection === link.id
                     ? 'text-white'
-                    : 'text-gray-400 hover:text-white'
-                  }
-                `}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                    : 'text-text-secondary hover:text-white'
+                }`}
               >
-                {link.name}
-                {/* Active indicator */}
-                {activeSection === link.href.replace('#', '') && (
+                {/* Active pill background */}
+                {activeSection === link.id && (
                   <motion.div
-                    layoutId="activeSection"
-                    className="absolute inset-0 bg-white/10 rounded-lg -z-10"
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    layoutId="activeNav"
+                    className="absolute inset-0 rounded-xl bg-glass-light"
+                    style={{ borderRadius: 12 }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
-              </motion.a>
+                <span className="relative z-10">{link.label}</span>
+              </button>
             ))}
           </div>
-
-          {/* Mobile Menu Button */}
-          <motion.button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden relative z-50 p-2"
-            whileTap={{ scale: 0.9 }}
-            aria-label="Toggle menu"
-          >
-            <div className="w-6 h-5 flex flex-col justify-between">
-              <motion.span
-                animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-                className="w-full h-0.5 bg-white rounded-full origin-left"
-              />
-              <motion.span
-                animate={isOpen ? { opacity: 0, x: -10 } : { opacity: 1, x: 0 }}
-                className="w-full h-0.5 bg-white rounded-full"
-              />
-              <motion.span
-                animate={isOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-                className="w-full h-0.5 bg-white rounded-full origin-left"
-              />
-            </div>
-          </motion.button>
         </div>
-      </div>
+      </nav>
 
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={menuVariants}
-            className="
-              md:hidden fixed inset-0 top-0 pt-20
-              bg-dark-900/95 backdrop-blur-xl
-              flex flex-col items-center justify-center gap-6
-            "
-          >
-            {navLinks.map((link) => (
-              <motion.a
-                key={link.name}
-                href={link.href}
-                onClick={(e) => scrollToSection(e, link.href)}
-                variants={menuItemVariants}
-                className={`
-                  text-2xl font-display font-medium
-                  transition-colors duration-200
-                  ${activeSection === link.href.replace('#', '')
-                    ? 'text-purple-400'
-                    : 'text-gray-400 hover:text-white'
-                  }
-                `}
-                whileHover={{ scale: 1.1, x: 10 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {link.name}
-              </motion.a>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+      {/* Mobile Dock Navigation */}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden">
+        <AnimatePresence>
+          {mobileOpen ? (
+            <motion.div
+              initial={{ y: 20, opacity: 0, scale: 0.95 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 20, opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="glass-strong rounded-2xl p-2 shadow-glass mb-2"
+            >
+              <div className="flex flex-wrap items-center justify-center gap-1 max-w-[320px]">
+                {navLinks.map((link) => (
+                  <button
+                    key={link.id}
+                    onClick={() => scrollTo(link.id)}
+                    className={`px-3 py-2 text-xs font-medium rounded-xl transition-all duration-300 ${
+                      activeSection === link.id
+                        ? 'bg-glass-light text-white'
+                        : 'text-text-secondary hover:text-white'
+                    }`}
+                  >
+                    {link.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+
+        <motion.button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="glass-strong rounded-2xl p-3.5 shadow-glass mx-auto flex items-center justify-center"
+          whileTap={{ scale: 0.95 }}
+        >
+          {mobileOpen ? (
+            <X size={22} className="text-white" />
+          ) : (
+            <Menu size={22} className="text-white" />
+          )}
+        </motion.button>
+      </div>
+    </>
   );
 };
 

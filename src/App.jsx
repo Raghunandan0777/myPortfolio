@@ -1,75 +1,114 @@
 /* ========================================
-   Main App Component
-   Assembles all sections with smooth scrolling
-   Includes Navbar and Footer layout
+   App — Root Component
+   Assembles all sections with Lenis smooth scrolling
+   Custom cursor, particle background, intro overlay, all sections
    ======================================== */
 
-// Layout Components
+import { useEffect, useRef, useState } from 'react';
+import Lenis from '@studio-freight/lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Layout
+import IntroScreen from './components/layout/IntroScreen';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
-// Page Sections
+// UI
+import CustomCursor from './components/ui/CustomCursor';
+import ParticleBackground from './components/ui/ParticleBackground';
+
+// Sections
 import Hero from './sections/Hero';
 import About from './sections/About';
-import Projects from './sections/Projects';
 import Skills from './sections/Skills';
-import Experience from './sections/Experience';
+import Projects from './sections/Projects';
+import Timeline from './sections/Timeline';
+import Services from './sections/Services';
 import Contact from './sections/Contact';
 
-/**
- * Main App Component
- * 
- * This is the root component that assembles the entire portfolio.
- * The portfolio consists of:
- * - Fixed Navbar for navigation
- * - Hero section with 3D liquid background
- * - About section with bio and tech stack
- * - Projects section with filterable cards
- * - Skills section with animated progress bars
- * - Experience timeline section
- * - Contact section with form
- * - Footer with social links
- */
+gsap.registerPlugin(ScrollTrigger);
+
 function App() {
+  const lenisRef = useRef(null);
+  const [showIntro, setShowIntro] = useState(() => {
+    // Check if intro has already been shown in this browser session
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('hasSeenIntro') !== 'true';
+    }
+    return true;
+  });
+
+  // Initialize Lenis smooth scrolling
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      smoothWheel: true,
+    });
+
+    lenisRef.current = lenis;
+
+    // Connect Lenis to GSAP ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    // Stop Lenis while intro is active
+    if (showIntro) {
+      lenis.stop();
+    } else {
+      lenis.start();
+    }
+
+    return () => {
+      lenis.destroy();
+      gsap.ticker.remove(lenis.raf);
+    };
+  }, [showIntro]);
+
+  const handleIntroComplete = () => {
+    setShowIntro(false);
+    if (lenisRef.current) {
+      lenisRef.current.start();
+    }
+    // Refresh ScrollTrigger to recalculate layout positions after intro hides
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+  };
+
   return (
-    <div className="relative min-h-screen bg-dark-900 text-white overflow-x-hidden">
-      {/* 
-        Navigation Bar
-        Fixed position, glassmorphism effect on scroll
-        Includes smooth scrolling to sections
-      */}
-      <Navbar />
+    <div className="relative min-h-screen bg-bg text-text overflow-x-hidden noise-overlay">
+      {/* Intro Landing Experience */}
+      {showIntro && <IntroScreen onComplete={handleIntroComplete} />}
 
-      {/* 
-        Main Content
-        All portfolio sections stacked vertically
-        Each section has its own scroll animations
-      */}
-      <main>
-        {/* Hero - Full screen with 3D liquid animation */}
-        <Hero />
+      {/* Custom gradient cursor */}
+      <CustomCursor />
 
-        {/* About Me - Bio, tech stack, stats */}
+      {/* Animated particle background */}
+      <ParticleBackground />
+
+      {/* Floating Glass Navigation — Only shown after intro finishes */}
+      {!showIntro && <Navbar />}
+
+      {/* Main Content */}
+      <main className="relative z-10">
+        <Hero isIntroActive={showIntro} />
         <About />
-
-        {/* Projects - Filterable project cards with 3D effects */}
-        <Projects />
-
-        {/* Skills - Animated progress bars by category */}
         <Skills />
-
-        {/* Experience - Animated vertical timeline */}
-        <Experience />
-
-        {/* Contact - Form and social links */}
+        <Projects />
+        <Timeline />
+        <Services />
         <Contact />
       </main>
 
-      {/* 
-        Footer
-        Social links and copyright
-      */}
-      <Footer />
+      {/* Footer */}
+      {!showIntro && <Footer />}
     </div>
   );
 }

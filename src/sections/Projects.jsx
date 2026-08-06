@@ -1,253 +1,260 @@
 /* ========================================
-   Projects Section Component
-   Dynamic project cards with 3D hover effects
-   Filterable by category with smooth transitions
+   Projects Section — Premium Project Showcase
+   Featured project (larger), regular project cards
+   Hover animations, tech badges, live demo + GitHub
    ======================================== */
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { projects, getCategories } from '../data/projects';
-import SectionTitle from '../components/ui/SectionTitle';
-import GlassCard from '../components/ui/GlassCard';
-import Button from '../components/ui/Button';
 
-/**
- * Project Card Component
- * Displays individual project with 3D tilt effect
- */
-const ProjectCard = ({ project, index }) => {
-  const [isHovered, setIsHovered] = useState(false);
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ExternalLink, Github, ArrowUpRight } from 'lucide-react';
+import SectionHeading from '../components/ui/SectionHeading';
+import projects from '../data/projects';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const FeaturedProjectCard = ({ project }) => {
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        cardRef.current,
+        { y: 80, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: cardRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    });
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -30 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+    <div
+      ref={cardRef}
+      className="glass rounded-2xl overflow-hidden card-hover group mb-8 md:mb-12"
+      style={{ opacity: 0 }}
     >
-      <GlassCard
-        className="group h-full overflow-hidden"
-        hover3D={true}
-        glowOnHover={true}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        {/* Project Image / Placeholder */}
-        <div className="relative h-48 overflow-hidden">
-          {/* Actual project image or gradient fallback */}
-          {project.image ? (
-            <img 
-              src={project.image} 
-              alt={project.title}
-              className={`
-                absolute inset-0 w-full h-full object-cover
-                transition-transform duration-500
-                ${isHovered ? 'scale-110' : 'scale-100'}
-              `}
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'block';
-              }}
-            />
-          ) : null}
-          {/* Gradient fallback (shows if no image or image fails to load) */}
-          <div 
-            className={`
-              absolute inset-0 
-              bg-gradient-to-br from-purple-600/30 via-cyan-600/30 to-pink-600/30
-              transition-transform duration-500
-              ${isHovered ? 'scale-110' : 'scale-100'}
-              ${project.image ? 'hidden' : 'block'}
-            `}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        {/* Screenshot */}
+        <div className="relative overflow-hidden aspect-video lg:aspect-auto">
+          <img
+            src={project.image}
+            alt={project.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
           />
-          
-          {/* Project number badge */}
-          <div className="absolute top-4 left-4 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-sm font-mono text-purple-300">
-            #{String(project.id).padStart(2, '0')}
-          </div>
-
-          {/* Category badge */}
-          <div className="absolute top-4 right-4 px-3 py-1 bg-purple-500/20 backdrop-blur-sm rounded-full text-xs font-medium text-purple-300 border border-purple-500/30">
-            {project.category}
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-bg/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           {/* Featured badge */}
-          {project.featured && (
-            <div className="absolute bottom-4 left-4 flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-sm rounded-full text-xs font-medium text-yellow-300 border border-yellow-500/30">
-              <span>⭐</span> Featured
-            </div>
-          )}
+          <div className="absolute top-4 left-4 glass px-3 py-1.5 rounded-lg text-xs font-semibold text-primary-light">
+            ★ Featured Project
+          </div>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-4">
-          {/* Title */}
-          <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors">
+        <div className="p-6 md:p-8 lg:p-10 flex flex-col justify-center">
+          <div className="mb-2 text-sm text-primary font-medium">{project.category}</div>
+          <h3 className="font-display text-2xl md:text-3xl font-bold text-white mb-4">
             {project.title}
           </h3>
-
-          {/* Description */}
-          <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
+          <p className="text-text-secondary leading-relaxed mb-6">
             {project.description}
           </p>
 
-          {/* Tech Stack */}
-          <div className="flex flex-wrap gap-2">
-            {project.techStack.slice(0, 4).map((tech, i) => (
+          {/* Tech badges */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {project.techStack.map((tech, i) => (
               <span
                 key={i}
-                className="
-                  px-2 py-1 text-xs font-medium
-                  bg-white/5 text-gray-300
-                  rounded-md border border-white/10
-                "
+                className="glass px-3 py-1 rounded-lg text-xs font-medium text-text-secondary"
               >
                 {tech}
               </span>
             ))}
-            {project.techStack.length > 4 && (
-              <span className="px-2 py-1 text-xs text-gray-500">
-                +{project.techStack.length - 4} more
-              </span>
-            )}
           </div>
 
-          {/* Action buttons */}
-          <div className="flex gap-3 pt-2">
-            <motion.a
+          {/* Actions */}
+          <div className="flex items-center gap-3">
+            <a
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="
-                flex-1 flex items-center justify-center gap-2
-                py-2.5 rounded-lg
-                bg-gradient-to-r from-purple-500/20 to-cyan-500/20
-                border border-purple-500/30
-                text-sm font-medium text-white
-                hover:from-purple-500/30 hover:to-cyan-500/30
-                transition-all duration-300
-              "
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="magnetic-btn magnetic-btn-primary text-sm"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
+              <ExternalLink size={16} />
               Live Demo
-            </motion.a>
-            <motion.a
+            </a>
+            <a
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="
-                flex items-center justify-center gap-2
-                px-4 py-2.5 rounded-lg
-                bg-white/5 border border-white/10
-                text-sm font-medium text-gray-300
-                hover:bg-white/10 hover:text-white
-                transition-all duration-300
-              "
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="magnetic-btn magnetic-btn-secondary text-sm"
             >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-              </svg>
-            </motion.a>
+              <Github size={16} />
+              Source Code
+            </a>
           </div>
         </div>
-      </GlassCard>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
-/**
- * Projects Section Component
- */
-const Projects = () => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const categories = ['All', ...getCategories()];
-
-  // Filter projects based on selected category
-  const filteredProjects = selectedCategory === 'All'
-    ? projects
-    : projects.filter(p => p.category === selectedCategory);
+const ProjectCard = ({ project, index }) => {
+  const cardRef = useRef(null);
 
   return (
-    <section id="projects" className="relative py-24 md:py-32">
-      {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-purple-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-cyan-500/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+    <div
+      ref={cardRef}
+      className="project-card glass rounded-2xl overflow-hidden card-hover group"
+    >
+      {/* Screenshot */}
+      <div className="relative overflow-hidden aspect-video">
+        <img
+          src={project.image}
+          alt={project.title}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
 
-      <div className="section-container relative">
-        <SectionTitle
-          title="My Projects"
-          subtitle="Explore my recent work and side projects"
+        {/* Hover overlay with links */}
+        <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500">
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass w-12 h-12 rounded-xl flex items-center justify-center text-white hover:bg-glass-hover transition-all duration-300 hover:scale-110"
+          >
+            <ExternalLink size={20} />
+          </a>
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass w-12 h-12 rounded-xl flex items-center justify-center text-white hover:bg-glass-hover transition-all duration-300 hover:scale-110"
+          >
+            <Github size={20} />
+          </a>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-5 md:p-6">
+        <div className="flex items-start justify-between mb-2">
+          <div>
+            <span className="text-xs text-primary font-medium">{project.category}</span>
+            <h3 className="font-display text-lg font-bold text-white mt-1">
+              {project.title}
+            </h3>
+          </div>
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-text-muted hover:text-white transition-colors mt-1"
+          >
+            <ArrowUpRight size={20} />
+          </a>
+        </div>
+
+        <p className="text-text-muted text-sm leading-relaxed mb-4 line-clamp-2">
+          {project.description}
+        </p>
+
+        {/* Tech badges */}
+        <div className="flex flex-wrap gap-1.5">
+          {project.techStack.slice(0, 4).map((tech, i) => (
+            <span
+              key={i}
+              className="px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-glass text-text-muted"
+            >
+              {tech}
+            </span>
+          ))}
+          {project.techStack.length > 4 && (
+            <span className="px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-glass text-text-muted">
+              +{project.techStack.length - 4}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Projects = () => {
+  const sectionRef = useRef(null);
+  const gridRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const cards = gridRef.current?.querySelectorAll('.project-card');
+      if (cards) {
+        gsap.fromTo(
+          cards,
+          { y: 60, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            stagger: 0.15,
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: 'top 80%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const featuredProjects = projects.filter(p => p.featured);
+  const otherProjects = projects.filter(p => !p.featured);
+
+  return (
+    <section id="projects" ref={sectionRef} className="section-padding relative">
+      <div className="section-container">
+        <SectionHeading
+          label="Portfolio"
+          title="Featured Projects"
+          subtitle="A curated selection of projects that showcase my skills and problem-solving approach."
         />
 
-        {/* Category Filter */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-2 mb-12"
-        >
-          {categories.map((category) => (
-            <motion.button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`
-                px-4 py-2 rounded-lg text-sm font-medium
-                transition-all duration-300
-                ${selectedCategory === category
-                  ? 'bg-gradient-to-r from-purple-500 to-cyan-500 text-white shadow-lg shadow-purple-500/25'
-                  : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border border-white/10'
-                }
-              `}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+        {/* Featured Projects */}
+        {featuredProjects.map((project) => (
+          <FeaturedProjectCard key={project.id} project={project} />
+        ))}
+
+        {/* Other Projects Grid */}
+        {otherProjects.length > 0 && (
+          <>
+            <h3 className="font-display text-xl md:text-2xl font-bold text-white mb-8 mt-4">
+              More Projects
+            </h3>
+            <div
+              ref={gridRef}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"
             >
-              {category}
-            </motion.button>
-          ))}
-        </motion.div>
-
-        {/* Projects Grid */}
-        <motion.div 
-          layout
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, index) => (
-              <ProjectCard 
-                key={project.id} 
-                project={project} 
-                index={index} 
-              />
-            ))}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* View more on GitHub */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mt-12"
-        >
-          <Button
-            variant="outline"
-            href="https://github.com/Raghunandan0777"
-            external
-            icon={
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-              </svg>
-            }
-          >
-            View More on GitHub
-          </Button>
-        </motion.div>
+              {otherProjects.map((project, index) => (
+                <ProjectCard key={project.id} project={project} index={index} />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

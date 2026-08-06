@@ -1,153 +1,142 @@
 /* ========================================
-   Skills Section Component
-   Animated progress bars with glow effects
-   Categorized skills with visual indicators
+   Skills Section — Interactive Glowing Skill Cards
+   Responsive grid of skill cards with hover glow
+   GSAP scroll-triggered stagger entrance
    ======================================== */
-import { motion } from 'framer-motion';
-import { skills } from '../data/skills';
-import SectionTitle from '../components/ui/SectionTitle';
-import GlassCard from '../components/ui/GlassCard';
 
-/**
- * Animated skill bar component
- * Shows skill name and animated progress indicator
- */
-const SkillBar = ({ name, level, delay, color }) => {
-  // Color classes based on skill category
-  const colorClasses = {
-    'neon-purple': {
-      gradient: 'from-purple-500 to-purple-400',
-      glow: 'shadow-purple-500/30',
-      bg: 'bg-purple-500/10',
-    },
-    'neon-cyan': {
-      gradient: 'from-cyan-500 to-cyan-400',
-      glow: 'shadow-cyan-500/30',
-      bg: 'bg-cyan-500/10',
-    },
-    'neon-pink': {
-      gradient: 'from-pink-500 to-pink-400',
-      glow: 'shadow-pink-500/30',
-      bg: 'bg-pink-500/10',
-    },
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {
+  Atom, Globe, Server, Zap, Database, FileCode,
+  Palette, Cloud, Container, GitBranch, Brain,
+} from 'lucide-react';
+import SectionHeading from '../components/ui/SectionHeading';
+import skills from '../data/skills';
+
+gsap.registerPlugin(ScrollTrigger);
+
+// Map icon names to Lucide components
+const iconMap = {
+  Atom, Globe, Server, Zap, Database, FileCode,
+  Palette, Cloud, Container, GitBranch, Brain,
+};
+
+const SkillCard = ({ skill, index }) => {
+  const cardRef = useRef(null);
+
+  // Mouse position tracking for radial glow
+  const handleMouseMove = (e) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty('--mouse-x', `${x}%`);
+    card.style.setProperty('--mouse-y', `${y}%`);
   };
 
-  const colors = colorClasses[color] || colorClasses['neon-purple'];
+  const IconComponent = iconMap[skill.icon] || Atom;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.5 }}
-      className="group"
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      className="skill-card glass rounded-2xl p-6 card-hover cursor-default group relative"
+      style={{ opacity: 0 }}
     >
-      {/* Skill name and level */}
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-gray-300 font-medium group-hover:text-white transition-colors">
-          {name}
-        </span>
-        <span className="text-gray-500 text-sm font-mono">{level}%</span>
+      {/* Icon */}
+      <div
+        className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all duration-500 group-hover:scale-110"
+        style={{
+          backgroundColor: `${skill.color}15`,
+          boxShadow: `0 0 0px ${skill.color}00`,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = `0 0 30px ${skill.color}40`;
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = `0 0 0px ${skill.color}00`;
+        }}
+      >
+        <IconComponent size={24} style={{ color: skill.color }} />
       </div>
 
-      {/* Progress bar container */}
-      <div className={`h-2 rounded-full ${colors.bg} overflow-hidden`}>
-        {/* Animated progress fill */}
-        <motion.div
-          initial={{ width: 0 }}
-          whileInView={{ width: `${level}%` }}
-          viewport={{ once: true }}
-          transition={{ delay: delay + 0.2, duration: 0.8, ease: 'easeOut' }}
-          className={`
-            h-full rounded-full
-            bg-gradient-to-r ${colors.gradient}
-            shadow-lg ${colors.glow}
-          `}
-        />
-      </div>
-    </motion.div>
+      {/* Name */}
+      <h3 className="font-display font-semibold text-lg text-white mb-1">
+        {skill.name}
+      </h3>
+
+      {/* Description */}
+      <p className="text-text-muted text-sm leading-relaxed">
+        {skill.description}
+      </p>
+
+      {/* Hover border glow */}
+      <div
+        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{
+          boxShadow: `inset 0 0 0 1px ${skill.color}30, 0 0 20px ${skill.color}10`,
+        }}
+      />
+    </div>
   );
 };
 
-/**
- * Skill category card component
- */
-const SkillCategory = ({ category, data, index }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ delay: index * 0.2, duration: 0.6 }}
-  >
-    <GlassCard className="p-6 h-full">
-      {/* Category header */}
-      <div className="flex items-center gap-3 mb-6">
-        <span className="text-3xl">{data.icon}</span>
-        <h3 className="text-xl font-bold text-white">{data.title}</h3>
-      </div>
-
-      {/* Skills list */}
-      <div className="space-y-4">
-        {data.items.map((skill, skillIndex) => (
-          <SkillBar
-            key={skill.name}
-            name={skill.name}
-            level={skill.level}
-            delay={skillIndex * 0.1}
-            color={data.color}
-          />
-        ))}
-      </div>
-    </GlassCard>
-  </motion.div>
-);
-
-/**
- * Skills Section Component
- */
 const Skills = () => {
-  const categories = Object.entries(skills);
+  const sectionRef = useRef(null);
+  const gridRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const cards = gridRef.current?.querySelectorAll('.skill-card');
+      if (cards) {
+        gsap.fromTo(
+          cards,
+          { y: 60, opacity: 0, scale: 0.95 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.7,
+            ease: 'power3.out',
+            stagger: {
+              each: 0.08,
+              from: 'start',
+            },
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: 'top 80%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section id="skills" className="relative py-24 md:py-32 overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-mesh pointer-events-none opacity-50" />
-      
-      {/* Decorative circles */}
-      <div className="absolute top-1/4 -right-32 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 -left-32 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl" />
+    <section id="skills" ref={sectionRef} className="section-padding relative">
+      {/* Background gradient mesh */}
+      <div className="absolute inset-0 gradient-mesh pointer-events-none" />
 
-      <div className="section-container relative">
-        <SectionTitle
-          title="My Skills"
-          subtitle="Technologies and tools I work with"
+      <div className="section-container relative z-10">
+        <SectionHeading
+          label="Tech Stack"
+          title="Skills & Technologies"
+          subtitle="The tools and technologies I use to bring ideas to life."
         />
 
-        {/* Skills grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map(([key, data], index) => (
-            <SkillCategory
-              key={key}
-              category={key}
-              data={data}
-              index={index}
-            />
+        <div
+          ref={gridRef}
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6"
+        >
+          {skills.map((skill, index) => (
+            <SkillCard key={skill.name} skill={skill} index={index} />
           ))}
         </div>
-
-        {/* Additional skills text */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6 }}
-          className="mt-12 text-center"
-        >
-          <p className="text-gray-500 text-sm">
-            Also experienced with: 
-            <span className="text-gray-400"> REST APIs, WebSockets, OAuth, JWT, Testing (Jest, Cypress), Agile/Scrum, Code Review</span>
-          </p>
-        </motion.div>
       </div>
     </section>
   );
